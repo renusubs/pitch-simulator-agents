@@ -66,7 +66,7 @@ def run_evaluation(business_idea: str):
     """Function called by Streamlit to evaluate any dynamic idea."""
     try:
         logger.info(f"Running multi-agent evaluation for: {business_idea}")
-        result = evaluation_pipeline.run(input=f"Evaluate startup idea: {business_idea}")
+        result = evaluation_pipeline(f"Evaluate startup idea: {business_idea}")
         return result
     except Exception as e:
         logger.error(f"Error during evaluation: {e}")
