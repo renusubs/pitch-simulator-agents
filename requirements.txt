@@ -1,0 +1,4 @@
+streamlit
+strands
+boto3
+EOF
