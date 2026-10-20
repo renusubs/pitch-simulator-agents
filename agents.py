@@ -71,4 +71,3 @@ def run_evaluation(business_idea: str):
     except Exception as e:
         logger.error(f"Error during evaluation: {e}")
         return f"Error during evaluation: {e}"
-EOF
