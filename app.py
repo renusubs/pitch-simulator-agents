@@ -21,4 +21,3 @@ if st.button("Evaluate Idea", type="primary"):
             st.success("Evaluation Complete!")
             st.markdown("### 📊 Investor Memo & Analysis")
             st.code(evaluation_result, language="json")
-EOF
