@@ -7,7 +7,7 @@ os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
-from strands import Agent, Orchestrator
+from strands import Agent
 from strands.models import BedrockModel
 
 print("-> Initializing Llama 3.3 70B model configuration...")
@@ -49,16 +49,17 @@ vc_agent = Agent(
     )
 )
 
-# Set up the Orchestrator as a Sequential Pipeline
-evaluation_pipeline = Orchestrator(
-    mode="sequential",
-    agents=[market_agent, financial_agent, vc_agent],
-    supervisor_prompt=(
-        "Coordinate the startup evaluation pipeline across the team:\n"
-        "1. Pass the startup idea to MarketAnalyst for the market and competitor breakdown.\n"
-        "2. Pass the market results to FinancialModeler to construct unit economics and projections.\n"
-        "3. Pass both market and financial insights to VCPartner for final risk analysis and JSON output formatting."
-    )
+# Create an orchestrator agent that coordinates all three specialists via Agents-as-Tools
+evaluation_pipeline = Agent(
+    name="EvaluationPipelineOrchestrator",
+    system_prompt=(
+        "You are the lead orchestrator managing a startup evaluation team.\n"
+        "Coordinate the pipeline sequentially:\n"
+        "1. Delegate the startup idea to market_agent for the market and competitor breakdown.\n"
+        "2. Pass those results to financial_agent to construct unit economics and projections.\n"
+        "3. Finally, pass both market and financial insights to vc_agent for final risk analysis and JSON output formatting."
+    ),
+    tools=[market_agent, financial_agent, vc_agent]  # All specialist agents included
 )
 
 def run_evaluation(business_idea: str):
