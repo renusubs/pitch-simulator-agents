@@ -28,13 +28,8 @@ def check_password():
 # --- BLOCK APP UNLESS PASSWORD IS CORRECT ---
 if check_password():
     
-    # PUT ALL YOUR EXISTING APP CODE HERE 👇
-    st.title("Pitch Simulator & AI Evaluator")
-    # (Your existing Streamlit code, inputs, and Bedrock calls go under here...)
-
     st.set_page_config(page_title="Multi-Agent Startup Validator", layout="centered")
-
-    st.title("🚀 AI Startup Idea Validator")
+    st.title("Pitch Simulator & AI Evaluator")
     st.write("Powered by AWS Bedrock, Llama 3.3, and Strands Multi-Agent Orchestration.")
 
     user_idea = st.text_area(
