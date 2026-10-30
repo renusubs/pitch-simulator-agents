@@ -25,6 +25,25 @@ The specialists are attached to the orchestrator as tools ("agents as tools"), s
 
 ## Prerequisites
 
+### AWS credentials
+
+The app calls Amazon Bedrock, so it needs AWS credentials on the machine that runs it. No keys are stored in this repo.
+
+1. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+2. Create an access key for an IAM user with Bedrock access (IAM → Users → your user → Security credentials → Create access key, choose the CLI use case).
+3. Run `aws configure` and enter:
+   - Access Key ID
+   - Secret Access Key
+   - Default region: `us-east-1`
+   - Default output format: `json`
+4. Check that the credentials work:
+   ```bash
+   aws sts get-caller-identity
+   ```
+5. Make sure Llama 3.3 70B Instruct is enabled in Amazon Bedrock model access for `us-east-1`.
+
+Never commit access keys or paste them into code. Keep `.streamlit/secrets.toml` out of Git.
+
 - Python 3.10+
 - An AWS account with access to **Llama 3.3 70B Instruct** in Amazon Bedrock, region `us-east-1`
 - AWS credentials configured locally (for example, via `aws configure`)
