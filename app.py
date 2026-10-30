@@ -1,6 +1,9 @@
 from agents import run_evaluation
 import streamlit as st
 
+
+st.set_page_config(page_title="Multi-Agent Startup Validator", layout="centered")
+
 def check_password():
     """Returns `True` if the user enters the correct password."""
     def password_entered():
@@ -24,11 +27,11 @@ def check_password():
     else:
         # Correct password
         return True
+        
 
 # --- BLOCK APP UNLESS PASSWORD IS CORRECT ---
 if check_password():
     
-    st.set_page_config(page_title="Multi-Agent Startup Validator", layout="centered")
     st.title("Pitch Simulator & AI Evaluator")
     st.write("Powered by AWS Bedrock, Llama 3.3, and Strands Multi-Agent Orchestration.")
 
