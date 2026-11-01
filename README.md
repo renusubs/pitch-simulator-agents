@@ -20,33 +20,33 @@ The specialists are attached to the orchestrator as tools ("agents as tools"), s
 ├── agents.py          # Model setup, specialist agents, orchestrator, run_evaluation()
 ├── app.py             # Streamlit UI with password gate
 └── .streamlit/
-    └── secrets.toml   # APP_PASSWORD (not committed)
+    └── secrets.toml   # APP_PASSWORD (not in the repo: create it locally)
 ```
 
 ## Prerequisites
 
-### AWS credentials
-
-The app calls Amazon Bedrock, so it needs AWS credentials on the machine that runs it. No keys are stored in this repo.
-
-1. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-2. Create an access key for an IAM user with Bedrock access (IAM → Users → your user → Security credentials → Create access key, choose the CLI use case).
-3. Run `aws configure` and enter:
-   - Access Key ID
-   - Secret Access Key
-   - Default region: `us-east-1`
-   - Default output format: `json`
-4. Check that the credentials work:
-   ```bash
-   aws sts get-caller-identity
-   ```
-5. Make sure Llama 3.3 70B Instruct is enabled in Amazon Bedrock model access for `us-east-1`.
-
-Never commit access keys or paste them into code. Keep `.streamlit/secrets.toml` out of Git.
-
 - Python 3.10+
 - An AWS account with access to **Llama 3.3 70B Instruct** in Amazon Bedrock, region `us-east-1`
-- AWS credentials configured locally (for example, via `aws configure`)
+- A Bedrock API key (see below)
+
+### Bedrock API key
+
+The app authenticates to Amazon Bedrock with a Bedrock API key. No keys are stored in this repo.
+
+1. Sign in to the AWS console and open the **Amazon Bedrock** console in region **us-east-1**.
+2. In the left menu, choose **API keys**, then the **Long-term API keys** tab.
+3. Choose **Generate long-term API keys**, select an expiration (30 days is fine for testing), and generate the key.
+4. Copy the key and keep it private. Never commit it or paste it into code.
+5. Set it as an environment variable in the terminal you'll run the app from:
+   - **Windows (PowerShell, this session only):**
+     ```powershell
+     $env:AWS_BEARER_TOKEN_BEDROCK = "your-key"
+     ```
+   - **Windows (saved for future sessions):** run `setx AWS_BEARER_TOKEN_BEDROCK "your-key"`, then open a new terminal.
+   - **macOS/Linux:** `export AWS_BEARER_TOKEN_BEDROCK="your-key"`
+6. Make sure Llama 3.3 70B Instruct is enabled under Bedrock model access for `us-east-1`.
+
+Long-term keys expire and are for exploration. For a longer-lived deployment, use short-term keys or IAM roles instead. If a key is ever exposed, deactivate or delete it in the Bedrock console.
 
 ## Setup
 
@@ -60,7 +60,7 @@ Create `.streamlit/secrets.toml`:
 APP_PASSWORD = "your-password-here"
 ```
 
-Add this file to `.gitignore` so the password is never committed.
+Make sure `.streamlit/` is listed in `.gitignore` so the password is never committed.
 
 ## Running the app
 
@@ -73,14 +73,13 @@ Enter the password, describe your idea, and click **Evaluate Idea**.
 ## Configuration
 
 - **Model:** `us.meta.llama3-3-70b-instruct-v1:0` in `agents.py`
-- **Region:** set to `us-east-1` via `AWS_DEFAULT_REGION` in `agents.py`
+- **Region:** `us-east-1`, set via `AWS_DEFAULT_REGION` in `agents.py`
 - **Logging:** INFO-level logs are printed to stdout
 
 ## Known limitations
 
 - The VC agent is asked for JSON, but the model may not always return valid JSON. The output is displayed as-is.
 - Errors during evaluation are returned as text and shown in the output area.
-- `st.set_page_config()` should be the first Streamlit call in `app.py`. It currently runs after `st.title()`, which Streamlit will reject. Move it to the top of the file.
 - The password check is a simple shared password, not user accounts. Don't rely on it for sensitive data.
 - Results are estimates from an LLM, not financial advice.
 
